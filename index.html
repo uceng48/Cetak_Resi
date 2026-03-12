@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nyetak Gambar jeung Resi</title>
     <!-- PDF.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
-    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';</script>
+    <script src="pdf.min.js"></script>
+    <script>
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.min.js';
+    </script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: Arial, sans-serif; background: #0f172a; height: 100vh; overflow: hidden; }
@@ -203,12 +205,12 @@
     const PAPER_SIZES = { 'A4': [210, 297], 'A3': [297, 420], 'A3+': [329, 483] };
 
     const imageFilenames = [
-        'AESTETiC.jpg','ASTRONOT.jpg','AVATAR.jpg','BE-POSITIVE.jpg','BEACH.jpg','BT-21.jpg',
-        'COFFEE.jpg','DORAEMON.jpg','FARM.jpg','FLOWER-NATURE.jpg','GAME.jpg','IDEAS=COFFEE.jpg',
-        'INDONESIA.jpg','ITSOK.jpg','KUCINGLUTCU.jpg','LOVE.jpg','MEOW.jpg','MOOD-PANDA.jpg',
-        'MOTOR.jpg','NOTHINK.jpg','OCEANS.jpg','ONE-PIECE.jpg','PANTAI.jpg','SAMURAI.jpg',
-        'SUCCES.jpg','SWEAT-CAT.jpg','TRAVELING.jpg','UNICORN.jpg','VW.jpg','H013.jpg',
-        'H014.jpg','H015.jpg','HO16.jpg','H017.jpg','H021.jpg','H022.jpg','H023.jpg','H018.jpg','H019.jpg','H020.jpg'
+        'AESTETiC.jpg', 'ASTRONOT.jpg','AVATAR.jpg','BE-POSITIVE.jpg','BEACH.jpg','BT-21.jpg',
+        'COFFEE.jpg', 'DORAEMON.jpg','FARM.jpg','FLOWER-NATURE.jpg','GAME.jpg','IDEAS=COFFEE.jpg',
+        'INDONESIA.jpg', 'ITSOK.jpg','KUCINGLUTCU.jpg','LOVE.jpg','MEOW.jpg','MOOD-PANDA.jpg',
+        'MOTOR.jpg', 'NOTHINK.jpg','OCEANS.jpg','ONE-PIECE.jpg','PANTAI.jpg','SAMURAI.jpg',
+        'SUCCES.jpg', 'SWEAT-CAT.jpg','TRAVELING.jpg','UNICORN.jpg','VW.jpg', 'H013.jpg',
+        'H014.jpg', 'H015.jpg','HO16.jpg','H017.jpg','H021.jpg','H022.jpg','H023.jpg','H018.jpg','H019.jpg','H020.jpg'
     ];
 
     // --- TAB SYSTEM ---
@@ -246,28 +248,20 @@
         });
     }
 
-    // --- ASSET MANAGEMENT ---
-    async function loadAssets() {
+    // --- ASSET MANAGEMENT (REVISI KECEPATAN LOADING) ---
+    function loadAssets() {
         const grid = document.getElementById('assetGrid');
-        grid.innerHTML = '<div style="grid-column:span 2; text-align:center; color:white">Kedeung...</div>';
-        assetList = [];
+        grid.innerHTML = '<div style="grid-column:span 2; text-align:center; color:white">Memuat...</div>';
+        
+        // REVISI: Langsung mapping URL gambar asli, tidak perlu diconvert ke Canvas di awal
+        assetList = imageFilenames.map(name => {
+            return {
+                id: Math.random(),
+                name: name,
+                dataUrl: 'images/' + name // Menggunakan URL langsung, sangat cepat!
+            };
+        });
 
-        for (let name of imageFilenames) {
-            try {
-                const dataUrl = await new Promise((res, rej) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const c = document.createElement('canvas');
-                        c.width = img.width; c.height = img.height;
-                        c.getContext('2d').drawImage(img, 0, 0);
-                        res(c.toDataURL('image/jpeg'));
-                    };
-                    img.onerror = rej;
-                    img.src = 'images/' + name;
-                });
-                assetList.push({ id: Math.random(), name, dataUrl });
-            } catch (e) { console.warn("Gagal ceunah:", name); }
-        }
         renderAssets();
     }
 
@@ -278,7 +272,8 @@
             const div = document.createElement('div');
             div.className = 'asset-item';
             div.innerHTML = `
-                <img src="${asset.dataUrl}" onclick="addToCanvasImg(${idx})">
+                <!-- REVISI: Tambahan loading="lazy" agar memori komputer tidak terbebani -->
+                <img src="${asset.dataUrl}" loading="lazy" onclick="addToCanvasImg(${idx})">
                 <div class="name">${asset.name}</div>
                 <button class="rotate-btn" onclick="rotateAsset(${idx})">↻</button>
             `;
@@ -287,6 +282,7 @@
     }
 
     async function rotateAsset(idx) {
+        // Saat diputar, baru dikonversi ke Base64 (Canvas)
         assetList[idx].dataUrl = await rotateImageSource(assetList[idx].dataUrl, 90);
         renderAssets();
     }
@@ -328,7 +324,7 @@
         else renderImgMode();
     }
 
-    // RENDER RESI (Logic awal: Grid Otomatis)
+    // RENDER RESI
     function renderResi() {
         const container = document.getElementById('canvas-resi');
         container.innerHTML = '';
@@ -365,7 +361,7 @@
         }
     }
 
-    // RENDER IMAGE (Logic baru: Free Flow dengan Gap)
+    // RENDER IMAGE
     function renderImgMode() {
         const container = document.getElementById('canvas-image');
         container.innerHTML = '';
@@ -440,7 +436,7 @@
                 const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
                 resiData.push({ id: Date.now() + Math.random(), src: dataUrl });
                 
-                // Simpan ke riwayat (opsional)
+                // Simpan ke riwayat
                 addToHistory(f.name + ' P'+i, dataUrl);
             }
         }
