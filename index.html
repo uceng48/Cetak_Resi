@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nyetak Gambar jeung Resi - Versi Siku</title>
+    <title>Studio Nyetak - Versi Kres Siku Plus</title>
     <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
     <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';</script>
@@ -23,91 +23,78 @@
 
         /* Main Layout */
         .main { display: flex; flex: 1; overflow: hidden; }
-        
-        /* Sidebar */
         .sidebar { width: 320px; background: #1e293b; border-right: 1px solid #334155; display: flex; flex-direction: column; color: white; }
-        
-        /* Tab Menu */
         .tab-nav { display: flex; background: #0f172a; padding: 8px 8px 0 8px; gap: 4px; }
         .tab-btn { flex: 1; padding: 10px; border: none; background: #1e293b; color: #94a3b8; cursor: pointer; border-radius: 8px 8px 0 0; font-weight: bold; font-size: 11px; }
         .tab-btn.active { background: #3b82f6; color: white; }
-
         .tab-content { flex: 1; display: none; flex-direction: column; overflow: hidden; }
         .tab-content.active { display: flex; }
-
-        /* Sidebar Sections */
         .sidebar-scroll { flex: 1; overflow-y: auto; padding: 15px; }
         .slider-group { margin-bottom: 16px; }
         .slider-group label { display: block; font-size: 11px; color: #94a3b8; margin-bottom: 4px; text-transform: uppercase; }
         .numeric-input { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
         .numeric-input input { width: 100%; background: #334155; border: 1px solid #475569; color: white; padding: 6px; border-radius: 4px; }
         .info-box { background: #334155; padding: 10px; border-radius: 8px; font-size: 12px; margin-top: 10px; }
-        
-        /* Asset Grid */
         .asset-grid-title { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; font-size: 11px; font-weight: bold; color: #3b82f6; border-top: 1px solid #334155; }
         .asset-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
         .asset-item { background: #334155; border-radius: 6px; overflow: hidden; cursor: pointer; border: 2px solid transparent; position: relative; }
         .asset-item:hover { border-color: #3b82f6; }
         .asset-item img { width: 100%; aspect-ratio: 1; object-fit: contain; background: #000; display: block; }
         .asset-item .name { padding: 4px; font-size: 9px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .rotate-btn { position: absolute; top: 5px; right: 5px; background: #3b82f6; color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 5px rgba(0,0,0,0.5); }
-
-        /* History */
+        .rotate-btn { position: absolute; top: 5px; right: 5px; background: #3b82f6; color: white; border: none; width: 26px; height: 26px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; z-index: 10; }
         .history-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
         .history-item { background: #334155; border-radius: 6px; overflow: hidden; cursor: pointer; font-size: 9px; text-align: center; }
         .history-item img { width: 100%; aspect-ratio: 1; object-fit: cover; }
 
-        /* Content Area */
+        /* Canvas Area */
         .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         .toolbar { background: #1e293b; padding: 10px 20px; display: flex; gap: 12px; border-bottom: 1px solid #334155; align-items: center; }
-        .canvas-container { flex: 1; overflow: auto; padding: 20px; display: none; flex-direction: column; align-items: center; gap: 30px; background: #0f172a; }
+        .canvas-container { flex: 1; overflow: auto; padding: 40px; display: none; flex-direction: column; align-items: center; gap: 30px; background: #0f172a; }
         .canvas-container.active { display: flex; }
 
-        /* Paper Styles */
-        .paper-page { background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center; padding: 5mm; position: relative; flex-shrink: 0; }
-        
-        /* SLOT DASAR (Pikeun Resi) */
-        .slot { border: 0.1mm dashed #ccc; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .slot img { width: 100%; height: 100%; object-fit: fill; }
+        /* KERTAS & SLOT */
+        .paper-page { background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: flex; flex-wrap: wrap; align-content: flex-start; justify-content: center; padding: 10mm; position: relative; flex-shrink: 0; }
+        .slot { border: 0.1mm dashed #ccc; position: relative; display: flex; align-items: center; justify-content: center; }
+        .slot img { width: 100%; height: 100%; object-fit: fill; position: relative; z-index: 5; }
         .delete-btn { position: absolute; top: 2px; right: 2px; background: rgba(220,38,38,0.8); color: white; border: none; width: 22px; height: 22px; border-radius: 4px; cursor: pointer; display: none; z-index: 30; }
         .slot:hover .delete-btn { display: block; }
         .page-label { position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.3); color: white; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
 
-        /* SLOT KHUSUS GAMBAR (GARIS SIKU / CROP MARKS) */
+        /* KRES SIKU PLUS (Crop Marks) - PERBAIKAN DI SINI */
         .slot.img-mode { border: none !important; overflow: visible; }
         .slot.img-mode::before,
         .slot.img-mode::after {
             content: "";
             position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
+            /* Ukuran 10mm leuwih badag ti gambar sangkan garisna kaluar 5mm */
+            width: calc(100% + 10mm);
+            height: calc(100% + 10mm);
+            top: -5mm;
+            left: -5mm;
             pointer-events: none;
-            z-index: 20;
+            z-index: 20; /* Di luhureun gambar */
         }
 
-        /* Garis Siku Top-Left & Bottom-Right */
+        /* Garis Horizontal dina juru (Tanda +) */
         .slot.img-mode::before {
             background: 
-                linear-gradient(to right, #000 0.2mm, transparent 0.2mm) 0 0 / 4mm 0.2mm,
-                linear-gradient(to bottom, #000 0.2mm, transparent 0.2mm) 0 0 / 0.2mm 4mm,
-                linear-gradient(to left, #000 0.2mm, transparent 0.2mm) 100% 100% / 4mm 0.2mm,
-                linear-gradient(to top, #000 0.2mm, transparent 0.2mm) 100% 100% / 0.2mm 4mm;
+                /* Top Left */    linear-gradient(to right, #000 10mm, transparent 10mm) 0 5mm / 10mm 0.3mm,
+                /* Top Right */   linear-gradient(to left, #000 10mm, transparent 10mm) 100% 5mm / 10mm 0.3mm,
+                /* Bottom Left */  linear-gradient(to right, #000 10mm, transparent 10mm) 0 calc(100% - 5mm) / 10mm 0.3mm,
+                /* Bottom Right */ linear-gradient(to left, #000 10mm, transparent 10mm) 100% calc(100% - 5mm) / 10mm 0.3mm;
             background-repeat: no-repeat;
         }
 
-        /* Garis Siku Top-Right & Bottom-Left */
+        /* Garis Vertikal dina juru (Tanda +) */
         .slot.img-mode::after {
             background: 
-                linear-gradient(to left, #000 0.2mm, transparent 0.2mm) 100% 0 / 4mm 0.2mm,
-                linear-gradient(to bottom, #000 0.2mm, transparent 0.2mm) 100% 0 / 0.2mm 4mm,
-                linear-gradient(to right, #000 0.2mm, transparent 0.2mm) 0 100% / 4mm 0.2mm,
-                linear-gradient(to top, #000 0.2mm, transparent 0.2mm) 0 100% / 0.2mm 4mm;
+                /* Top Left */    linear-gradient(to bottom, #000 10mm, transparent 10mm) 5mm 0 / 0.3mm 10mm,
+                /* Top Right */   linear-gradient(to bottom, #000 10mm, transparent 10mm) calc(100% - 5mm) 0 / 0.3mm 10mm,
+                /* Bottom Left */  linear-gradient(to top, #000 10mm, transparent 10mm) 5mm 100% / 0.3mm 10mm,
+                /* Bottom Right */ linear-gradient(to top, #000 10mm, transparent 10mm) calc(100% - 5mm) 100% / 0.3mm 10mm;
             background-repeat: no-repeat;
         }
 
-        /* Utility Buttons */
         .btn-blue { background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
         .btn-red { background: #ef4444; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
 
@@ -116,7 +103,7 @@
             .no-print { display: none !important; }
             .canvas-container { display: none !important; }
             .canvas-container.active { display: block !important; background: white; padding: 0; }
-            .paper-page { box-shadow: none; margin: 0 !important; page-break-after: always; border: none; }
+            .paper-page { box-shadow: none; margin: 0 !important; page-break-after: always; border: none; padding: 10mm; }
             .slot.img-mode::before, .slot.img-mode::after { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
@@ -150,22 +137,14 @@
                 <button class="tab-btn" onclick="openTab('image')">NYETAK GAMBAR</button>
             </nav>
 
-            <!-- TAB RESI -->
             <div id="tab-resi" class="tab-content active">
                 <div class="sidebar-scroll">
                     <div class="slider-group">
-                        <label>Lebar Resi (mm)</label>
+                        <label>Ukuran Resi (W x H mm)</label>
                         <div class="numeric-input">
-                            <input type="range" id="resiWidthRange" min="20" max="210" value="100">
-                            <input type="number" id="resiWidthNum" value="100">
+                            <input type="number" id="resiWidthNum" value="100"> x <input type="number" id="resiHeightNum" value="150">
                         </div>
-                    </div>
-                    <div class="slider-group">
-                        <label>Tinggi Resi (mm)</label>
-                        <div class="numeric-input">
-                            <input type="range" id="resiHeightRange" min="20" max="297" value="150">
-                            <input type="number" id="resiHeightNum" value="150">
-                        </div>
+                        <input type="range" id="resiWidthRange" min="20" max="210" value="100" style="width:100%; margin-top:8px">
                     </div>
                     <div class="info-box">
                         <div>Kapasitas/Hal: <span id="resiCapacity">0</span></div>
@@ -178,22 +157,17 @@
                 </div>
             </div>
 
-            <!-- TAB IMAGE -->
             <div id="tab-image" class="tab-content">
                 <div class="sidebar-scroll">
                     <div class="slider-group">
                         <label>Ukuran (W x H mm)</label>
                         <div class="numeric-input">
-                            <input type="number" id="imgW" value="50">
-                            <span>x</span>
-                            <input type="number" id="imgH" value="50">
+                            <input type="number" id="imgW" value="50"> x <input type="number" id="imgH" value="50">
                         </div>
                     </div>
                     <div class="slider-group">
                         <label>Jarak / Gap (mm)</label>
-                        <div class="numeric-input">
-                            <input type="number" id="imgGap" value="0" min="0">
-                        </div>
+                        <input type="number" id="imgGap" value="0" min="0" style="width:100%; background:#334155; border:1px solid #475569; color:white; padding:6px; border-radius:4px;">
                     </div>
                     <div class="asset-grid-title">
                         TINGGAL MILIH
@@ -223,13 +197,13 @@
     const PAPER_SIZES = { 'A4': [210, 297], 'A3': [297, 420], 'A3+': [329, 483] };
 
     const imageFilenames = [
-         'AESTETiC.jpg', 'ASTRONOT.jpg','AVATAR.jpg','BE-POSITIVE.jpg','BEACH.jpg', 'BT21.jpg',
+        'AESTETiC.jpg', 'ASTRONOT.jpg','AVATAR.jpg','BE-POSITIVE.jpg','BEACH.jpg', 'BT21.jpg',
         'COFFEE.jpg', 'DORAEMON.jpg','FARM.jpg','FLOWER-NATURE.jpg','GAME.jpg','IDEAS=COFFEE.jpg',
         'INDONESIA.jpg', 'ITSOK.jpg','KUCING LUTCU.jpg','LOVE.jpg','MEOW.jpg','MOOD-PANDA.jpg',
         'MOTOR.jpg', 'NOTHINK.jpg','OCEANS.jpg','ONE-PICE.jpg','PANTAI.jpg','SAMURAI.jpg',
         'SUCCES.jpg', 'SWEAT-CAT.jpg','TRAVELING.jpg','UNICORN.jpg','VW.jpg', 'H013.jpg',
         'H014.jpg', 'H015.jpg', 'HO16.jpg','H017.jpg','H021.jpg','H022.jpg','H023.jpg','H018.jpg','H019.jpg','H020.jpg'
-        ];
+    ];
 
     function openTab(mode) {
         currentMode = mode;
@@ -243,7 +217,6 @@
         updateUI();
     }
 
-    // LOAD ASSETS (METODE CEPAT)
     function loadAssets() {
         const grid = document.getElementById('assetGrid');
         grid.innerHTML = '<div style="grid-column:span 2; text-align:center; color:white">Memuat...</div>';
@@ -276,12 +249,6 @@
         renderAssets();
     }
 
-    function getPaperDim() {
-        const val = document.getElementById('paperType').value;
-        if(val === 'custom') return [parseInt(document.getElementById('custW').value), parseInt(document.getElementById('custH').value)];
-        return PAPER_SIZES[val];
-    }
-
     function addToCanvasImg(idx) {
         imageData.push({
             id: Date.now() + Math.random(),
@@ -312,11 +279,11 @@
     function renderResi() {
         const container = document.getElementById('canvas-resi');
         container.innerHTML = '';
-        const [pW, pH] = getPaperDim();
+        const paper = PAPER_SIZES[document.getElementById('paperType').value] || [210, 297];
         const rW = parseInt(document.getElementById('resiWidthNum').value);
         const rH = parseInt(document.getElementById('resiHeightNum').value);
-        const cols = Math.floor(pW / rW) || 1;
-        const rows = Math.floor((pH-10) / rH) || 1;
+        const cols = Math.floor(paper[0] / rW) || 1;
+        const rows = Math.floor((paper[1]-20) / rH) || 1;
         const perPage = cols * rows;
         const totalPages = Math.ceil(resiData.length / perPage) || 0;
 
@@ -324,7 +291,7 @@
         document.getElementById('resiTotal').innerText = resiData.length;
 
         for(let i=0; i < totalPages; i++) {
-            const page = createPageEl(pW, pH, i+1);
+            const page = createPageEl(paper[0], paper[1], i+1);
             resiData.slice(i * perPage, (i+1) * perPage).forEach(item => {
                 const slot = document.createElement('div');
                 slot.className = 'slot';
@@ -340,21 +307,21 @@
     function renderImgMode() {
         const container = document.getElementById('canvas-image');
         container.innerHTML = '';
-        const [pW, pH] = getPaperDim();
+        const paper = PAPER_SIZES[document.getElementById('paperType').value] || [210, 297];
         if(imageData.length === 0) { document.getElementById('pageCounter').innerText = "Item: 0 | Hal: 0"; return; }
 
         let pCount = 1;
-        let currentPage = createPageEl(pW, pH, pCount);
+        let currentPage = createPageEl(paper[0], paper[1], pCount);
         container.appendChild(currentPage);
 
         let curX = 0, curY = 0, rowH = 0;
-        const margin = 5;
+        const margin = 10;
 
         imageData.forEach(item => {
-            if (curX + item.w > pW - (margin*2)) { curX = 0; curY += rowH + item.gap; rowH = 0; }
-            if (curY + item.h > pH - (margin*2)) {
+            if (curX + item.w > paper[0] - (margin*2)) { curX = 0; curY += rowH + item.gap; rowH = 0; }
+            if (curY + item.h > paper[1] - (margin*2)) {
                 pCount++;
-                currentPage = createPageEl(pW, pH, pCount);
+                currentPage = createPageEl(paper[0], paper[1], pCount);
                 container.appendChild(currentPage);
                 curX = 0; curY = 0; rowH = 0;
             }
@@ -378,7 +345,6 @@
         return div;
     }
 
-    // PDF HANDLER
     document.getElementById('pdfInp').onchange = async (e) => {
         const files = Array.from(e.target.files);
         for(let f of files) {
@@ -405,19 +371,9 @@
         document.getElementById('resiHistory').prepend(div);
     }
 
-    // LISTENERS
-    document.getElementById('paperType').onchange = (e) => {
-        document.getElementById('customDim').style.display = e.target.value === 'custom' ? 'inline' : 'none';
-        updateUI();
-    };
-    ['custW','custH','imgW','imgH','imgGap'].forEach(id => document.getElementById(id).oninput = updateUI);
-    
-    const rWR = document.getElementById('resiWidthRange'); const rWN = document.getElementById('resiWidthNum');
-    const rHR = document.getElementById('resiHeightRange'); const rHN = document.getElementById('resiHeightNum');
-    rWR.oninput = () => { rWN.value = rWR.value; updateUI(); };
-    rWN.oninput = () => { rWR.value = rWN.value; updateUI(); };
-    rHR.oninput = () => { rHN.value = rHR.value; updateUI(); };
-    rHN.oninput = () => { rHR.value = rHN.value; updateUI(); };
+    document.getElementById('paperType').onchange = updateUI;
+    ['imgW','imgH','imgGap','resiWidthNum','resiHeightNum'].forEach(id => document.getElementById(id).oninput = updateUI);
+    document.getElementById('resiWidthRange').oninput = (e) => { document.getElementById('resiWidthNum').value = e.target.value; updateUI(); };
 
     updateUI();
 </script>
